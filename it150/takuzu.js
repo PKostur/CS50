@@ -1,49 +1,49 @@
-let n = 6;
-let o = 0;
-var empty = '';
+var E = '';
 
-arr = new Array(n);
-for (let i = 0; i < n; i++) {
-    arr[i] = new Array(n);
-    for (let j = 0; j < n; j++) {
-        arr[i][j] = ++o % 2;
-        
+let test = 
+[
+[1, 1, 0, 0],
+[1, 0, 1, 0], 
+[0, 1, 0, 1], 
+[0, 1, 0, 1]
+]
+console.log(test);
+
+
+function hasLegalElements(arr)
+{
+    for (let i = 0; i < arr.length; i++)
+    {
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            if (arr[i][j] != 1 && arr[i][j] != 0 && arr[i][j] != E)
+            {
+                return false;
+            }
+        }
     }
+    return true;
 }
 
 
-function isLegal(arr)
+
+
+function isLegalSize(arr)
 {
-    if (isLegalSize == ValChkCol == ValChkRows == true)
-    {
-        alert("Legal");
-        return true;
-    }
-    else
-    {
-        alert("Not Solvable");
-        return false;
-    }
-}
-console.log(isLegal(arr));
-
-
-
-function isLegalSize(puzzle)
-{
-    let counter = 0;
+    let counter1 = 0;
+    let counter2 = 0;
     while (true)
     {
         for (let i = 0; i < arr.length; i++)
         {
-            counter++;
+            counter1++;
             for (let j = 0; j < arr[i].length; j++)
             {
-                counter++;
+                counter2++;
             }
         }
 
-        if (arr.length % 2 != 0 || counter % 2 != 0 || arr.length < 4)
+        if (arr.length % 2 != 0 || counter1 == counter2 % 2 != 0 || arr.length < 4)
         {
             return false;
         }
@@ -54,6 +54,7 @@ function isLegalSize(puzzle)
     }    
 
 }
+
 
 function solver (arr)
 {
@@ -71,52 +72,85 @@ function solver (arr)
     }
 }
 
-function ValChkRows(arr)
+function checkThreeInARowRow(arr)
 {
-    let count = 0;
+    let count0;
+    let count1;
 
-    for (let i = 0; i < arr.length; i ++)
+    for (let i = 0; i < arr.length - 1; i++)
     {
-        for (let j = 0; j <= i; j++)
+        count0 = 0;
+        count1 = 0;
+        for (let j = 0; j < arr[i].length - 1; j++)
         {
-            if (arr[i][j] == arr[i][j - 1])
+            if (arr[i][j] == arr[i][j + 1])
             {
-                count++;
+                if (arr[i][j] == 0)
+                {
+                    count0++;
+                }
+                else if (arr[i][j] == 1)
+                {
+                    count1++;
+                }
             }
 
-            if (count > 2 )
+            if (count1 == 2 || count0 == 2)
             {
-                return false; 
+                return false;   
             }
-            else if (count <= 2 && j == arr.length - 1)
-            {
-                return true;
-            }  
         }
     }
+    return true;
 }
 
-function ValChkCol(arr)
-{
-    let count = 0;
-    for (let k = 1; k < arr.length; k++)
-    {
-        for (let l = 0; l <= k; l++)
-        {
-            if (arr[k][l] == arr[k - 1][l])
-            {
-                count++;
-            }
 
-            if (count > 2 )
+function checkThreeInARowCol(arr)
+{
+    let count0;
+    let count1;
+
+    for (let i = 0; i < arr.length - 1; i++)
+    {
+        count0 = 0;
+        count1 = 0;
+        for (let j = 0; j < arr[i].length - 1; j++)
+        {
+            if (arr[j][i] == arr[j + 1][i])
             {
-                return false;
+                if (arr[j][i] == 0)
+                {
+                    count0++;
+                }
+                else if (arr[j][i] == 1)
+                {
+                    count1++;
+                }
             }
-            else if (count <= 2 && l == arr.length - 1)
+            if (count1 == 2 || count0 == 2)
             {
-                return true;
-            }    
+                return false;   
+            }
         }
     }
+    return true;
 }
 
+function isLegal(arr)
+{
+    if ((isLegalSize(arr)) && (checkThreeInARowRow(arr)) && (checkThreeInARowCol(arr)) && (hasLegalElements(arr)))
+    {
+        alert("Legal");
+        return true;
+    }
+    else
+    {
+        alert("Not Legal");
+        return false;
+    }
+}
+console.log(isLegal(test));
+
+
+
+function main(){}
