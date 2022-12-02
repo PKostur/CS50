@@ -1,17 +1,25 @@
-var E = '';
+var E = -1;
 
-let test = 
-[
-[1, 1, 0, 0],
-[1, 0, 1, 0], 
-[0, 1, 0, 1], 
-[0, 1, 0, 1]
+let testT = [
+    [0, 1, 1, 0],
+    [1, 0, 0, 1], 
+    [0, 1, 0, 1], 
+    [1, 0, 1, 0]
 ]
-console.log(test);
+let testF = [
+    [0, 1, 1, 1],
+    [1, 0, 0, 1], 
+    [0, 1, 0, 0], 
+    [1, 0, 1, 0]   
+]
+console.log(testT);
 
+//-----------------VALIDITY CHECKS-----------------
 
 function hasLegalElements(arr)
 {
+    //Loops over every element in the takuzu and checks if they are 0, 1 or -1
+    //Returns true or false
     for (let i = 0; i < arr.length; i++)
     {
         for (let j = 0; j < arr[i].length; j++)
@@ -25,59 +33,36 @@ function hasLegalElements(arr)
     return true;
 }
 
-
-
-
 function isLegalSize(arr)
 {
-    let counter1 = 0;
-    let counter2 = 0;
-    while (true)
+    let counter1;
+    //Loops over every element in the takuzu and keeps count of the elements in each array
+    for (let i = 0; i < arr.length; i++)
     {
-        for (let i = 0; i < arr.length; i++)
+        counter1 = 0;
+        for (let j = 0; j < arr[i].length; j++)
         {
             counter1++;
-            for (let j = 0; j < arr[i].length; j++)
-            {
-                counter2++;
-            }
-        }
-
-        if (arr.length % 2 != 0 || counter1 == counter2 % 2 != 0 || arr.length < 4)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }    
-
-}
-
-
-function solver (arr)
-{
-    while (true)
-    {
-        let i = ValChkRows(arr);
-        if (i)
-        {
-            
-        }
-        else
-        {
-            break;
         }
     }
-}
+    //Returns true or false based on the amount of elements 
+    if (counter1 != arr.length || counter1 % 2 != 0 || arr.length < 4)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}    
 
 function checkThreeInARowRow(arr)
 {
+    //Loops over every element in the takuzu and keeps track of the amount of identical elements in a row
     let count0;
     let count1;
 
-    for (let i = 0; i < arr.length - 1; i++)
+    for (let i = 0; i < arr.length; i++)
     {
         count0 = 0;
         count1 = 0;
@@ -94,7 +79,7 @@ function checkThreeInARowRow(arr)
                     count1++;
                 }
             }
-
+            //Returns true or false based on the amount of identical elements in a row
             if (count1 == 2 || count0 == 2)
             {
                 return false;   
@@ -104,13 +89,12 @@ function checkThreeInARowRow(arr)
     return true;
 }
 
-
 function checkThreeInARowCol(arr)
 {
     let count0;
     let count1;
-
-    for (let i = 0; i < arr.length - 1; i++)
+    //Loops over every element in the takuzu and keeps track of the amount of identical elements in a column
+    for (let i = 0; i < arr.length; i++)
     {
         count0 = 0;
         count1 = 0;
@@ -127,6 +111,7 @@ function checkThreeInARowCol(arr)
                     count1++;
                 }
             }
+            //Returns true or false based on the amount of identical elements in a column
             if (count1 == 2 || count0 == 2)
             {
                 return false;   
@@ -136,21 +121,112 @@ function checkThreeInARowCol(arr)
     return true;
 }
 
+function checkNoOfNumbersRow(arr) 
+{
+    //Loops over every element in the takuzu and keeps count of the 1's and 0's in a row
+    let count0;
+    let count1;
+    for (let i = 0; i < arr.length; i++)
+    {
+        count0 = 0;
+        count1 = 0;
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            if (arr[i][j] == 0)
+            {
+                count0++;
+            }
+            else if (arr[i][j] == 1)
+            {
+                count1++;
+            }
+            //Returns true or false based on the amount of 1's and 0's 
+            if (count0 > arr.length / 2  || count1 > arr.length / 2)
+            {
+                return false;
+            }
+
+        }
+    }
+    return true;
+}
+
+function checkNoOfNumbersCol(arr)
+{
+    //Loops over every element in the takuzu and keeps track of the 1's and 0's in a column
+    let count0;
+    let count1;
+    for (let i = 0; i < arr.length; i++)
+    {
+        count0 = 0;
+        count1 = 0;
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            if (arr[j][i] == 0)
+            {
+                count0++;
+            }
+            else if (arr[j][i] == 1)
+            {
+                count1++;
+            }
+            //Returns true or false based on the amount of 1's and 0's in a column
+            if (count0 > arr.length / 2  || count1 > arr.length / 2)
+            {
+                return false;
+            }
+
+        }
+    }
+    return true;
+}
+
 function isLegal(arr)
 {
-    if ((isLegalSize(arr)) && (checkThreeInARowRow(arr)) && (checkThreeInARowCol(arr)) && (hasLegalElements(arr)))
+    //Returns true if all of the functions that check for the validity of the takuzu are true 
+    if ((isLegalSize(arr)) && (checkThreeInARowRow(arr)) && (checkThreeInARowCol(arr)) && (hasLegalElements(arr)) && checkNoOfNumbersRow(arr) && checkNoOfNumbersCol(arr))
     {
-        alert("Legal");
         return true;
     }
     else
     {
-        alert("Not Legal");
         return false;
     }
 }
-console.log(isLegal(test));
+
+function isSolved(arr)
+{
+    //Checks if there are empty elements in the takuzu and if the takuzu passes the validity check 
+    //Returns true or false
+    for (let i = 0; i < arr.length; i++)
+    {
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            if (arr[i][j] == E)
+            {
+                return false;
+            }
+            else if ((isLegal(arr)))
+            {
+                continue;
+            }
+        }
+    }
+    return true;
+}
+
+//-----------------SOLVER-----------------
 
 
 
-function main(){}
+
+
+
+
+
+
+
+
+
+
+
