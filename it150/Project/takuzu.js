@@ -1,13 +1,12 @@
 const E = -1;
 
-//-----------------VALIDITY CHECKS----------------- (DONE)
+//-----------------VALIDITY CHECKS-----------------
 
-function hasLegalElements(arr)
+function hasLegalElements(arr) {
 {
     //Loops over every element in the takuzu and checks if they are 0, 1 or -1
-    //Returns true or false
+    //ReturnReturnss true or false
     for (let i = 0; i < arr.length; i++)
-    {
         for (let j = 0; j < arr[i].length; j++)
         {
             if (arr[i][j] != 1 && arr[i][j] != 0 && arr[i][j] != E) return false;
@@ -141,7 +140,7 @@ function isSolved(arr)
     return true;
 }
 
-//-----------------SOLVER----------------- 
+//---------------------SOLVER--------------------- 
 
 function fillThreeInARowRow(arr)
 {
@@ -152,11 +151,11 @@ function fillThreeInARowRow(arr)
             if (arr[i][j] == E)
             {
                 arr[i][j] = 0;
-                if (isLegal(arr)) continue;
+                if (checkThreeInARowRow(arr) && isLegal(arr)) continue;
                 else arr[i][j] = E;
 
                 arr[i][j] = 1;
-                if (isLegal(arr)) continue;
+                if (checkThreeInARowRow(arr) && isLegal(arr)) continue;
                 else arr[i][j] = E;
             }
         }
@@ -172,11 +171,11 @@ function fillThreeInARowCol(arr)
             if (arr[j][i] == E)
             {
                 arr[j][i] = 0;
-                if (isLegal(arr)) continue;
+                if (checkThreeInARowCol(arr) && isLegal(arr)) continue;
                 else arr[j][i] = E;
     
                 arr[j][i] = 1;
-                if (isLegal(arr)) continue;
+                if (checkThreeInARowCol(arr) && isLegal(arr)) continue;
                 else arr[j][i] = E;
             }
         }
@@ -192,11 +191,11 @@ function fillByNumberOfElementsRows(arr)
             if (arr[i][j] == E)
             {
                 arr[i][j] = 0;
-                if (isLegal(arr)) continue;
+                if (checkNoOfNumbersRow(arr) && isLegal(arr)) continue;
                 else arr[i][j] = E;
 
                 arr[i][j] = 1;
-                if (isLegal(arr)) continue;
+                if (checkNoOfNumbersRow(arr) && isLegal(arr)) continue;
                 else arr[i][j] = E;
             }
         }
@@ -212,16 +211,19 @@ function fillByNumberOfElementsCols(arr)
             if (arr[j][i] == E)
             {
                 arr[j][i] = 0;
-                if (isLegal(arr)) continue;
+                if (checkNoOfNumbersCol(arr) && isLegal(arr)) continue;
                 else arr[j][i] = E;
 
                 arr[j][i] = 1;
-                if (isLegal(arr)) continue;
+                if (checkNoOfNumbersCol(arr) && isLegal(arr)) continue;
                 else arr[j][i] = E;
             }
         }
     }
 }
+
+//------------------------------------------------
+
 
 function copy(arr)
 {
@@ -236,18 +238,6 @@ function copy(arr)
     return copy;
 }
 
-function overwrite(arr1,arr2)
-{
-
-    for (let i = 0; i < arr1.length; i++)
-    {
-        for (let j = 0; j < arr1[0].length; j++) 
-        {
-            arr2[i][j] = arr1[i][j];
-        }
-    }
-}
-
 function areEqual(arr, arr2)
 {
     for (let i = 0; i < arr.length; i++)
@@ -260,55 +250,13 @@ function areEqual(arr, arr2)
     return true;
 }
 
-
-
-function alternativeSolve(arr)
-{
-    for (let i = 0; i < arr.length; i++ )
-    {
-        for (let j = 0; j < arr[i].length; j++)
-        {
-            if (arr[i][j] == E)
-            {
-                arr[i][j] = 1;
-                if (isLegal(arr)) 
-                {
-                    arr[i][j] = 1;
-                    fillThreeInARowCol(arr);
-                    fillThreeInARowRow(arr);
-                    fillByNumberOfElementsRows(arr);
-                    fillByNumberOfElementsCols(arr);
-                }
-                else arr[i][j] = E;
-
-                arr[i][j] = 0;
-                if (isLegal(arr)) 
-                {
-                    arr[i][j] = 0;
-                
-                    fillThreeInARowCol(arr);
-                    fillThreeInARowRow(arr);
-                    fillByNumberOfElementsRows(arr);
-                    fillByNumberOfElementsCols(arr);
-                }
-                else arr[i][j] = E;
-
-            }
-        }   
-    } 
-
-}
-
-
-
-//NOT DONE, HAVE TO DO BACKTRACKING
 function solve(arr) 
 {
-    let arr1 = copy(arr);
+    //Combines all the solving functions into one complete
     let arr2 = copy(arr);
+
     while (true) 
     {   
-        //
         fillByNumberOfElementsCols(arr);
         fillThreeInARowRow(arr);
         fillByNumberOfElementsRows(arr);
@@ -318,89 +266,84 @@ function solve(arr)
 
         if (isSolved(arr)) return true;
 
-        if (areEqual(arr, arr2)) 
-        {  
-            loop1:
-            for (let i = 0; i < arr2.length; i++ )
-            {
-                for (let j = 0; j < arr2[i].length; j++)
-                { 
-                    if (arr2[i][j] == E)
-                    {
-                        arr2[i][j] = 0;
-                        if (solve(arr2)){
-                            overwrite(arr, arr2);
-                            return true;
-                        }
-                        else 
-                        {
-                            arr2[i][j] = 1;
-                            if (solve(arr2))
-                            {
-                                overwrite(arr, arr2);
-                                return true
-                            }
-                            break loop1;
-                        }
-                    
-                    }
-                    
+        //Backtracking not done
+        if (areEqual(arr, arr2)) return false;
 
-                }
-
-            }
-            
-        }
         if (!areEqual(arr, arr2)) arr2 = copy(arr);
     }
+    
 }
 function printPuzzle(arr)
 {
-    if (isSolved(arr))
+    //Prints a pattern for in the console
+    let str = '';
+    for (let i = 0; i < arr.length; i++ )
     {
-        alert("Done!");
-        console.log(arr);
-        return true;
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            str = str + "---------   ";
+        }
+        str = str + "\n";
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            str = str + "|\t";
+            str = str + arr[i][j] + '\t|\t';         
+        }
+        str = str + "\n";
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            str = str + "---------   ";
+        }
+        str = str  + '\n';
     }
-    return false;
+    console.log(str);
 
+    //Prints a table in the HTML DOM
+    table = document.createElement('table');
+    table.setAttribute('class', 'table');
+    for (let i = 0; i < arr.length; i++ )
+    {
+        let row = document.createElement('tr');
+        for (let j = 0; j < arr[i].length; j++)
+        {
+            let td = document.createElement('td');
+            td.innerText = arr[i][j];
+            row.appendChild(td);
+        }
+        table.appendChild(row);
+    }
+    document.body.appendChild(table);
 }
 
 function main()
 {
-    let test1 = [
-        [0, 0, 1, 1],
-        [1, 0, 1, 0], 
-        [0, 1, 0, 1], 
-        [1, 1, 0, 0]
+    let failedTak = [
+        [1, 0, E, E, 1, E],
+        [E, E, E, 1, 0, 1], 
+        [E, 1, E, E, 0, E], 
+        [E, 1, 0, E, 1, 1],
+        [1, 0, 1, E, E, 1],
+        [1, 0, 1, E, E, E]   
     ]
-    let test2 = [
-        [1, E, E, 1, E, E],
-        [E, 1, E, 0, 0, E], 
-        [E, E, E, E, E, E], 
-        [E, E, E, 0, E, E],
-        [E, 0, E, E, E, E],
-        [1, E, 1, E, E, E]   
+    let successfulTak = [
+        [1, 0, E, E, 1, E],
+        [E, E, E, E, 0, 1], 
+        [E, 1, E, E, E, E], 
+        [E, 1, 0, E, 1, E],
+        [1, 0, 1, E, E, E],
+        [E, E, 1, E, E, E]  
     ]
+    let choice = prompt(`Choose a puzzle: 1. Complete || 2. Illegal`);
+    if (choice == 1)
+    {
+        console.log(solve(successfulTak));
+        printPuzzle(successfulTak);
+    }
+    else if (choice == 2)
+    {
+        console.log(solve(failedTak));
+        printPuzzle(failedTak);
+    }
+    else alert("Wrong Choice!");
 }
-let test1 = [
-    [0, 0, 1, 1],
-    [1, 0, 1, 0], 
-    [0, 1, 0, 1], 
-    [1, 1, 0, 0]
-]
-let test2 = [
-    [E, 0, E, E, E, E],
-    [E, 0, E, 1, E, 1], 
-    [E, E, E, E, 0, E], 
-    [E, E, E, E, E, E],
-    [1, E, 1, E, E, 1],
-    [E, E, 1, E, E, E]   
-]
-console.log(test2);
-console.log(solve(test2));
-
-
-
-
-
+main();
